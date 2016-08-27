@@ -1,0 +1,41 @@
+__author__ = 'huposeya'
+# -*- coding:utf-8 -*-
+
+import requests
+from bs4 import BeautifulSoup
+
+class QSBK:
+    #初始化方法，定义一些变量
+    def __init__(self):
+        self.pageindex = 1     
+        self.list = []
+
+    #传入索引，获取页面源码
+    #利用try except 构建运行与错误提示的基本框架
+    def getPage(self):
+        try:
+            url = 'http://www.qiushibaike.com/8hr/page/' + str(self.pageindex) + '/?s=4907620'
+            response = requests.get(url)
+            return response
+        except requests.HTTPError as e:
+            if hasattr(e, "reason"):
+                print('连接糗事百科失败,错误原因', e.reason)
+                return None
+
+    #获取标签内的文字
+    def getstring(self):
+        response = self.getPage()
+        soup = BeautifulSoup(response.text, "html.parser")
+        self.list = soup.find_all(class_="content")
+        print('输入enter，获取下一条。输入q，退出。')
+        for i in self.list:
+            one = input()
+            if one == 'Q':
+                exit()
+            print(i.string)
+
+    def start(self):
+        self.getstring()
+
+spider = QSBK()
+spider.start()
